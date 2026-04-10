@@ -1,0 +1,324 @@
+
+
+# 🚀 k8s + aws + networking notes
+
+## 📌 Topics
+- Kubernetes traffic flow
+- Services & Ingress
+- AWS VPC & networking
+- Security Groups & IAM
+- Auto Scaling
+- Networking basics (TCP/UDP/HTTP)
+
+---
+
+## 🌐 Traffic Flow (Big Picture)
+
+User  
+→ DNS  
+→ Cloud Load Balancer  
+→ Worker Node  
+→ kube-proxy  
+→ Ingress Controller Service  
+→ Ingress Controller Pod (Nginx)  
+→ Ingress Rules  
+→ App Service  
+→ App Pod  
+→ Database Service  
+→ Database Pod  
+
+---
+
+## ☁️ Cloud Load Balancer
+
+- Entry point from internet
+- Distributes traffic across nodes
+- Provides high availability
+- Avoids dependency on one node
+
+💡 Created when using:
+```yaml
+type: LoadBalancer
+
+
+---
+
+🔁 Kubernetes Services
+
+ClusterIP
+
+Internal communication only
+
+Gives service a stable internal IP
+
+
+
+---
+
+NodePort
+
+Exposes service using: NodeIP:Port
+
+
+
+---
+
+LoadBalancer
+
+Exposes service externally
+
+Creates cloud load balancer
+
+
+
+---
+
+🚦 Ingress
+
+Smart routing layer
+
+Routes based on:
+
+host
+
+path
+
+
+
+💡 Important:
+
+Traffic does NOT go through rules
+
+Controller reads rules and decides
+
+
+
+---
+
+🔗 Service Concept
+
+Service is NOT a real server
+
+It’s an abstraction
+
+Uses kube-proxy for routing
+
+
+
+---
+
+⚙️ kube-proxy
+
+Routes traffic from service → pods
+
+Can send traffic:
+
+same node
+
+different node
+
+
+
+
+---
+
+☁️ AWS Networking
+
+VPC
+
+Isolated network
+
+All resources inside it
+
+
+
+---
+
+Subnets
+
+Public Subnet
+
+Has Internet Gateway
+
+Used for Load Balancer
+
+
+Private Subnet
+
+No direct internet access
+
+Used for:
+
+worker nodes
+
+control plane
+
+
+
+
+---
+
+🌍 Internet Gateway
+
+Attached to VPC
+
+Enables internet access
+
+
+
+---
+
+🔁 NAT Gateway
+
+Purpose:
+
+Allow private subnet to access internet
+
+
+Flow: Private → Internet ✅
+Internet → Private ❌
+
+
+---
+
+🔐 Security Groups
+
+Firewall per resource
+
+Controls:
+
+inbound traffic
+
+outbound traffic
+
+
+
+Example:
+
+80 → HTTP
+
+443 → HTTPS
+
+6443 → Kubernetes API
+
+
+
+---
+
+🔑 IAM
+
+Controls permissions between AWS services
+
+
+Example
+
+Node:
+
+can upload to S3
+
+cannot read sensitive data
+
+
+💡 Important: Even if node is hacked → access still restricted
+
+
+---
+
+📈 Auto Scaling
+
+Kubernetes
+
+Cluster Autoscaler
+
+decides when to scale
+
+
+
+---
+
+AWS
+
+Auto Scaling Group
+
+creates EC2 instances
+
+
+
+---
+
+Flow
+
+Kubernetes → request
+AWS → execute
+
+
+---
+
+🌍 DNS
+
+example.com → Cloud Load Balancer
+
+
+---
+
+📡 Protocols
+
+TCP
+
+reliable
+
+ordered
+
+retries lost packets
+
+
+👉 ensures data delivery
+
+
+---
+
+UDP
+
+fast
+
+no guarantee
+
+
+
+---
+
+HTTP
+
+used between client and server
+
+
+
+---
+
+🧠 Key Takeaways
+
+Cloud LB = entry point
+
+Ingress = routing logic
+
+Service = internal load balancing
+
+kube-proxy = actual routing
+
+IAM = permissions
+
+Security Groups = network protection
+
+VPC = isolation
+
+Auto Scaling = scalability
+
+
+
+---
+
+🔥 Summary
+
+Understood how traffic moves from internet to pod in Kubernetes on AWS
+and how security, networking, and scaling work together.
+
